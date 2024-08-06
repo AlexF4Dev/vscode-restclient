@@ -41,7 +41,7 @@ jobs:
 
     - uses: actions/upload-artifact@v2
       with:
-        name: ${{ steps.setup.outputs.packageName }}
+        name: ${{ matrix.os }}-${{ steps.setup.outputs.packageName }}
         path: ./${{ steps.setup.outputs.packageName }}
         if-no-files-found: error
 
