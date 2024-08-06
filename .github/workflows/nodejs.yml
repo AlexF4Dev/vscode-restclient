@@ -27,4 +27,5 @@ jobs:
         npm run tslint
     - name: Package
       run: |
+        npm install -g @vscode/vsce
         npx vsce package
