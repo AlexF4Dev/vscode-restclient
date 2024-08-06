@@ -25,3 +25,6 @@ jobs:
         npm install
         npm run vscode:prepublish
         npm run tslint
+    - name: Package
+      run: |
+        npx vsce package
