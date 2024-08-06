@@ -7,10 +7,14 @@ jobs:
     name: Run tslint on node ${{ matrix.node-version }} and ${{ matrix.os }}
 
     runs-on: ${{ matrix.os }}
+    outputs:
+      packageName: ${{ steps.setup.outputs.packageName }}
+      tag: ${{ steps.setup-tag.outputs.tag }}
+      version: ${{ steps.setup-tag.outputs.version }}    
 
     strategy:
       matrix:
-        node-version: [18]
+        node-version: [22]
         os: [ubuntu-latest, windows-latest, macOS-latest]
 
     steps:
@@ -25,3 +29,27 @@ jobs:
         npm install
         npm run vscode:prepublish
         npm run tslint
+    
+    - name: Setup package path
+      id: setup
+      run: echo "::set-output name=packageName::$(node -e "console.log(require('./package.json').name + '-' + require('./package.json').version + '.vsix')")"
+
+    - name: Package
+      run: |
+        npm i -g @vscode/vsce
+        vsce package --out ${{ steps.setup.outputs.packageName }}
+
+    - uses: actions/upload-artifact@v2
+      with:
+        name: ${{ steps.setup.outputs.packageName }}
+        path: ./${{ steps.setup.outputs.packageName }}
+        if-no-files-found: error
+
+    - name: Setup tag
+      id: setup-tag
+      run: |
+        $version = (Get-Content ./package.json -Raw | ConvertFrom-Json).version
+        Write-Host "tag: release/$version"
+        Write-Host "::set-output name=tag::release/$version"
+        Write-Host "::set-output name=version::$version"
+      shell: pwsh
