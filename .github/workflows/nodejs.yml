@@ -39,7 +39,7 @@ jobs:
         npm i -g @vscode/vsce
         vsce package --out ${{ steps.setup.outputs.packageName }}
 
-    - uses: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v4
       with:
         name: ${{ matrix.os }}-${{ steps.setup.outputs.packageName }}
         path: ./${{ steps.setup.outputs.packageName }}
